@@ -1,5 +1,5 @@
 # ebooks
-Scripts for generating html files (which can then be loaded into Calibre to create ebooks) from OPenn and The Digital Walters.
+Scripts for generating html files (which can then be loaded into Calibre to create ebooks) from OPenn and The Digital Walters. Doug Emery (demery) helped quite a lot, particularly on the Walters file.
 
 This repository contains two files: ebook-generation-OPenn.xsl and ebook-generation-Walters.xsl. These files generate simple HTML files, pulling descriptive metadata from the TEI manuscript descriptions (against which they are processed) and creating a list of images in the manuscript. 
 
