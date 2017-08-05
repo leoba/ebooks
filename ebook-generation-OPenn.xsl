@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:tei="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="tei" version="2.0">
+    
+    <!-- At present this script can only be used to create HTML files that point to local images -->
 
     <xsl:template match="/">
         
-        <xsl:variable name="orientationURL"></xsl:variable>
+        
 
         <xsl:variable name="mstitle" select="substring(//tei:titleStmt/tei:title,16)"/>
         <xsl:variable name="summary" select="//tei:summary"/>
@@ -49,9 +51,10 @@
                     <!--<xsl:if test="matches($folNo, '\d+r') or matches($folNo, '\d+v') or matches($folNo, '^\d+') or matches($folNo, '^\d+')">-->
                         <xsl:for-each select="tei:graphic[starts-with(@url,'web')]">
                             <xsl:variable name="img" select="substring(@url,5)"/>
+                            
                             <p>
                                 <a href="#{$id}" name="img-{$id}" title="Folio {$folNo}"><img src="{$img}" alt="{$folNo}"/></a>
-                                <!--<center>Folio <xsl:value-of select="$folNo"/></center>-->
+                                
                             </p>
                         </xsl:for-each>
                     <!--</xsl:if>-->
