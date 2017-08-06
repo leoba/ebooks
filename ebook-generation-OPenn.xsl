@@ -12,6 +12,16 @@
         <xsl:variable name="summary" select="//tei:summary"/>
         <xsl:variable name="recordURL" select="//tei:altIdentifier[@type='resource']/tei:idno"/>
         <xsl:variable name="callNo" select="translate(//tei:idno[@type='call-number'],' ','')"/>
+        <xsl:variable name="teiFileNameURI" select="document-uri(/)"/>
+        <xsl:variable name="teiFileName" select="tokenize($teiFileNameURI,'/')[position() = last()]"/>
+        <xsl:variable name="msID" select="replace($teiFileName,'_TEI.xml','')"/>
+        <xsl:variable name="baseURL">http://openn.library.upenn.edu/Data/</xsl:variable>
+        <xsl:variable name="repositoryID">
+            <xsl:choose>
+                <xsl:when test="starts-with($msID,'m')">0002</xsl:when>
+                <xsl:when test="starts-with($msID,'l')">0001</xsl:when>
+            </xsl:choose>
+        </xsl:variable>
         
         <xsl:result-document href="input/{$callNo}.html">
             
@@ -40,6 +50,7 @@
                 <hr/>
                 <xsl:choose>
                     <xsl:when test="string-length($summary) > 500"/>
+                    <xsl:when test="string-length($summary) > 1000"><p>[This page left purposefully blank.]</p></xsl:when>
                     <xsl:otherwise><p>[This page left purposefully blank.]</p></xsl:otherwise>
                 </xsl:choose>
                 
@@ -51,11 +62,24 @@
                     <!--<xsl:if test="matches($folNo, '\d+r') or matches($folNo, '\d+v') or matches($folNo, '^\d+') or matches($folNo, '^\d+')">-->
                         <xsl:for-each select="tei:graphic[starts-with(@url,'web')]">
                             <xsl:variable name="img" select="substring(@url,5)"/>
+                            <xsl:variable name="full_path_to_img" select="concat($baseURL,$repositoryID,'/',$msID,'/data/web/',$img)"/>
+                            
+                            <!-- When you are using this to create an ebook you will need to have the images locally. In that case use this bit of code -->
                             
                             <p>
                                 <a href="#{$id}" name="img-{$id}" title="Folio {$folNo}"><img src="{$img}" alt="{$folNo}"/></a>
                                 
                             </p>
+                            
+                            <!-- When you will be using this for other reasons - and you don't have the images locally - comment the code above and uncomment this -->
+                            
+                                <p>
+                                    <a href="#{$id}"
+                                        name="img-{$id}"
+                                        title="Folio {$folNo}">
+                                        <img src="{$full_path_to_img}" alt="{$folNo}"/>
+                                    </a>
+                                </p>
                         </xsl:for-each>
                     <!--</xsl:if>-->
                 </xsl:for-each>
@@ -67,6 +91,8 @@
                     <!-- This originally tested for foliation or pagination but I don't think that's right so I'm removing the if test -->
                      <xsl:for-each select="tei:graphic[starts-with(@url,'web')]">
                             <xsl:variable name="img" select="substring(@url,5)"/>
+                            <xsl:variable name="full_path_to_img" select="concat($baseURL,$repositoryID,'/',$msID,'/data/web/',$img)"/>
+                         
                             
                                 <p><a href="#img-{$id}" name="{$id}">Back to image</a></p>
                             
@@ -83,7 +109,7 @@
                                     <xsl:value-of select="."/>
                                 </p>
                             </xsl:for-each>
-                         <p>If you are connected to the Internet, view a high-resolution version of this image in a browser.</p>
+                         <p><a href="{$full_path_to_img}">If you are connected to the Internet, view a high-resolution version of this image in a browser.</a></p>
                         </xsl:for-each>
                         
                             <hr/>

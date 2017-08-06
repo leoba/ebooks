@@ -151,6 +151,8 @@
                                 <xsl:value-of select="substring-before($folNo,'v')"/>
                             </xsl:if>
                         </xsl:variable>
+                        
+                        
                         <xsl:if
                             test="matches($fullFolNo, 'fol. \d+r$') or matches($fullFolNo, 'fol. \d+v$') or matches($fullFolNo, 'fol. \d+$')">
                             <xsl:for-each select="tei:graphic[starts-with(@url,'sap')]">

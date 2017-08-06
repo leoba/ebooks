@@ -9,6 +9,9 @@
         <xsl:variable name="recordURL" select="//tei:altIdentifier[@type='resource']/tei:idno"/>
         <xsl:variable name="callNo" select="//tei:idno[@type='call-number']"/>
         <xsl:variable name="baseURL">http://openn.library.upenn.edu/Data/</xsl:variable>
+        <xsl:variable name="teiFileNameURI" select="document-uri(/)"/>
+        <xsl:variable name="teiFileName" select="tokenize($teiFileNameURI,'/')[position() = last()]"/>
+        <xsl:variable name="msCode" select="replace($teiFileName,'_TEI.xml','')"/>
         <xsl:variable name="repository_code">
             <xsl:choose>
                 <xsl:when test="starts-with($callNo,'Othmer')">0025</xsl:when>
@@ -16,17 +19,7 @@
                 <xsl:otherwise>you need to add a new when test</xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
-        <xsl:variable name="msCode">
-            <xsl:choose>
-                <xsl:when test="$repository_code = 0025"><xsl:value-of select="replace($callNo,' ','')"/></xsl:when>
-                <xsl:when test="$repository_code = 0023">
-                    <xsl:variable name="callNo_part_1" select="lower-case(tokenize($callNo,' ')[position() = 1])"/>
-                    <xsl:variable name="callNo_part_2" select="lower-case(tokenize($callNo,' ')[position() = 2])"/>
-                    <xsl:variable name="callNo_part_3" select="format-number(number(tokenize($callNo,' ')[position() = 3]),'000')"/>
-                    <xsl:value-of select="concat($callNo_part_1,'_',$callNo_part_2,'_',$callNo_part_3)"/>
-                </xsl:when>
-            </xsl:choose>
-        </xsl:variable>
+        
         
         
         
@@ -91,7 +84,8 @@
                     <!-- This originally tested for foliation or pagination but I don't think that's right so I'm removing the if test -->
                      <xsl:for-each select="tei:graphic[starts-with(@url,'web')]">
                             <xsl:variable name="img" select="substring(@url,5)"/>
-                            
+                            <xsl:variable name="full_path_to_img" select="concat($baseURL,$repository_code,'/',$msCode,'/data/',@url)"/>
+                         
                                 <p><a href="#img-{$id}" name="{$id}">Back to image</a></p>
                             
                             <xsl:if test="not(//tei:msItem[@n=$folNo]) and not(//tei:decoNote[@n=$folNo])">
@@ -107,7 +101,7 @@
                                     <xsl:value-of select="."/>
                                 </p>
                             </xsl:for-each>
-                         <p>If you are connected to the Internet, view a high-resolution version of this image in a browser.</p>
+                         <p><a href="{$full_path_to_img}">If you are connected to the Internet, view a high-resolution version of this image in a browser.</a></p>
                         </xsl:for-each>
                         
                             <hr/>
